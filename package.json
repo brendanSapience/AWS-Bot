@@ -6,6 +6,7 @@
   "description": "AWS bot",
   "dependencies": {
     "aws-sdk": "^2.187.0",
+    "forever": "^0.15.3",
     "hubot": "^2.19.0",
     "hubot-aws-v2": "0.0.9",
     "hubot-diagnostics": "0.0.2",
