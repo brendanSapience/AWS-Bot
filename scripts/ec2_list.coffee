@@ -16,7 +16,16 @@ moment = require 'moment'
 util   = require 'util'
 tsv    = require 'tsv'
 
-AWS.config.update({region:'us-east-1'});
+AUTOMICAWSACCESSKEY = process.env.AUTOMICAWSACCESSKEY
+AUTOMICAWSSECRETKEY = process.env.AUTOMICAWSSECRETKEY
+AUTOMICAWSREGION = process.env.AUTOMICAWSREGION
+
+AWS.config.update({
+    accessKeyId: AUTOMICAWSACCESSKEY,
+    secretAccessKey: AUTOMICAWSSECRETKEY,
+    "region": AUTOMICAWSREGION
+})
+console.log(AUTOMICAWSACCESSKEY)
 ec2 = new AWS.EC2()
 
 getArgParams = (arg) ->

@@ -5,6 +5,7 @@
   "author": "Bren Sapience <brendan.sapience@gmail.com>",
   "description": "AWS bot",
   "dependencies": {
+    "aws-sdk": "^2.187.0",
     "hubot": "^2.19.0",
     "hubot-aws-v2": "0.0.9",
     "hubot-diagnostics": "0.0.2",
