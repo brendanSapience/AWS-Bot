@@ -43,10 +43,8 @@ module.exports = (robot) ->
     msg.send msg_txt
 
   # Get Favorite EC2 Instance 
-  robot.hear /test/i, (msg) ->
-    username = msg.message.user.name
-    Key = username+"_FavoriteAWSIns"
-    FoundID = robot.brain.get "#{Key}"
+  robot.hear /(?:get|show|show me|show)(?: )*(?:my id|id|the id)/i, (msg) ->
+    FoundID = utils.getInstanceIDFromMemory(robot,msg)
     if FoundID
       msg_txt = "Here is the instance ID I found for you: *#{FoundID}*"
     else
