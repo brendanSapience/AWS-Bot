@@ -18,9 +18,11 @@ getMisc = (message) ->
 
 getHelpEC2 = (message) -> 
   message += "\t*EC2 Help*\n"
-  message += "\n\t\t *Get List of Current EC2 Instances*: _ec2 ls <Optional: Tag>_ \n"
+  message += "\n\t\t *Get List of Current EC2 Instances*: _ec2 ls <Optional: Tag or Status (inactive, active, running, stopped)>_ \n"
   message += "\t\t\t*Example*: say: \"_ec2 ls_\" \n" 
   message += "\t\t\t*Example*: say: \"_ec2 ls Dave_\" \n" 
+  message += "\t\t\t*Example*: say: \"_ec2 ls active_\" \n" 
+  message += "\t\t\t*Example*: say: \"_ec2 ls inactive_\" \n"
 
   message += "\n\t\t *Start or Stop EC2 Instance*: _ec2 <start|stop> <InstanceID>_ \n"
   message += "\t\t\t*Example*: say: \"_ec2 start 0650920f52db7fbe0_\" \n" 

@@ -1,14 +1,17 @@
 # Description:
-#   List ec2 instances on your AWS account.  
+#   List / start / stop ec2 instances on Automic PSL AWS account.  
 #
 # Commands:
-#   hubot ec2 ls <search_filter> - Displays Instances
+#   ec2 list <search_filter> - Displays Instances
+#   ec2 stop <instance_id> - Stops Instance
+#   ec2 start <instance_id> - Starts Instance
 
 # Notes:
 #   <search_filter>: [optional] The name to be used for filtering the returned instances by instance name.
+#   <instance_id>: [mandatory] The EC2 Unique Instance ID (usually starts with "i-", the "i-" is however not mandatory)
 #
 # Author:
-#   John Szaszvari <jszaszvari@gmail.com>
+#   Bren Sapience <brendan.sapience@gmail.com>
 
 AWS = require('aws-sdk');
 
@@ -16,6 +19,7 @@ moment = require 'moment'
 util   = require 'util'
 tsv    = require 'tsv'
 
+# AWS Creds are stored as Environment Variables
 AUTOMICAWSACCESSKEY = process.env.AUTOMICAWSACCESSKEY
 AUTOMICAWSSECRETKEY = process.env.AUTOMICAWSSECRETKEY
 AUTOMICAWSREGION = process.env.AUTOMICAWSREGION
@@ -28,6 +32,7 @@ AWS.config.update({
 
 ec2 = new AWS.EC2()
 
+# add "i-" in front of the instance ID if it isnt there
 getInstanceID = (InstID) ->
   if /^i-.*$/.test(InstID)
     return InstID
@@ -37,13 +42,23 @@ getInstanceID = (InstID) ->
 module.exports = (robot) ->
   hubotAdapter = robot.adapterName
 
+  # List EC2 Instances
   robot.hear /(?:ec2|aws|amazon)(?: )*(?:list|ls|show|instances)(.*)$/i, (msg) ->
 
     arg_params = msg.match[1]
-    ins_filter = msg.match[1].replace /^\s+|\s+$/g, ""
+    ins_filter = msg.match[1].replace /^\s+|\s+$/g, "" # could be a name, but could also be a status? stopped or running
+
+    StatusFilter = false
+    StatusKeyword = ""
+
+    if /start|started|running|active/i.test(ins_filter) then StatusFilter = true; StatusKeyword = "running";
+    if /stop|stopped|inactive/i.test(ins_filter) then StatusFilter = true; StatusKeyword = "stopped";
    
     msg_txt = "Fetching all instances"
-    msg_txt += " containing '#{ins_filter}' in name" if ins_filter
+    if StatusFilter
+      msg_txt += " in status: *#{StatusKeyword}*" if ins_filter
+    else
+      msg_txt += " containing *#{ins_filter}* in name" if ins_filter
     msg_txt += "..."
     msg.send msg_txt
 
@@ -58,8 +73,8 @@ module.exports = (robot) ->
             name = '[NoName]'
             for tag in ins.Tags when tag.Key is 'Name'
               name = tag.Value
-
-            continue if ins_filter and name.toUpperCase().indexOf(ins_filter.toUpperCase()) is -1
+ 
+            continue if not StatusFilter and ins_filter and name.toUpperCase().indexOf(ins_filter.toUpperCase()) is -1
 
             if ins.State.Name is "running"
               statuscolor = "#008000"
@@ -72,24 +87,27 @@ module.exports = (robot) ->
               msgSendMethod = msg.send
 
             #msg.send("*#{name}* (*#{ins.State.Name}*) - #{ins.InstanceType} [#{ins.PrivateIpAddress} - #{ins.PublicIpAddress}]")
-            msg.send({
-              channel: 'gCCmdeFSQJFoLRigB',
-              attachments: [
-                {
-                  title: "*#{name}* - *#{ins.State.Name}* - #{ins.InstanceId}",
-                  text: "\t => #{ins.InstanceType} [#{ins.PrivateIpAddress} - #{ins.PublicIpAddress}]",
-                  color: statuscolor
-                  #fields: [
-                  # {
-                  #  "title": "ID: #{ins.InstanceId}"
-                  # }
-                  #]
-                }
-              ]
-            });
+            #console.log("testing:#{StatusKeyword}: and #{ins.State.Name} ")
+            if StatusKeyword != "" and ins.State.Name == StatusKeyword
+              msg.send({
+                channel: 'gCCmdeFSQJFoLRigB',
+                attachments: [
+                  {
+                    title: "*#{name}* - *#{ins.State.Name}* - #{ins.InstanceId}",
+                    text: "\t => #{ins.InstanceType} [#{ins.PrivateIpAddress} - #{ins.PublicIpAddress}]",
+                    color: statuscolor
+                    #fields: [
+                    # {
+                    #  "title": "ID: #{ins.InstanceId}"
+                    # }
+                    #]
+                  }
+                ]
+              });
+    #msg.send "Done!"
       
 
-            
+  # Start EC2 Instance 
   robot.hear /(?:ec2|aws|amazon)(?: )*start(?: )*(.*)$/i, (msg) ->
     ins_id_input = msg.match[1]
     ins_id = getInstanceID(ins_id_input)
@@ -132,6 +150,7 @@ module.exports = (robot) ->
               ]
             });
 
+  # Stop EC2 Instance
   robot.hear /(?:ec2|aws|amazon)(?: )*stop(?: )*(.*)$/i, (msg) ->
     ins_id_input = msg.match[1]
     ins_id = getInstanceID(ins_id_input)
