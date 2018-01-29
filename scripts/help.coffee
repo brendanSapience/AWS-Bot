@@ -9,6 +9,7 @@
 Robot = require('hubot')
 
 getReleaseNotes = (message) ->
+  message += " *Jan 29 - 2018*: _can list based on status (active, inactive, stopped, running)_\n"
   message += " *Jan 26 - 2018*: _First Release: ec2 instance list, start & stop_\n"
 
 getMisc = (message) ->
