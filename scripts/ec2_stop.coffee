@@ -35,7 +35,7 @@ module.exports = (robot) ->
   # Stop EC2 Instance
   robot.hear /(?:ec2|aws|amazon)(?: )*stop(?: )*(.*)$/i, (msg) ->
     ins_id_input = msg.match[1]
-    ins_id = getInstanceID(ins_id_input)
+    ins_id = utils.getInstanceID(ins_id_input)
 
     msg_txt = "Stopping Instance ID #{ins_id}"
     msg.send msg_txt

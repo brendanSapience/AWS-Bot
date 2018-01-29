@@ -35,7 +35,7 @@ module.exports = (robot) ->
   # Start EC2 Instance 
   robot.hear /(?:ec2|aws|amazon)(?: )*start(?: )*(.*)$/i, (msg) ->
     ins_id_input = msg.match[1]
-    ins_id = getInstanceID(ins_id_input)
+    ins_id = utils.getInstanceID(ins_id_input)
     msg_txt = "Starting Instance ID #{ins_id}"
     msg.send msg_txt
     params = {
