@@ -2,7 +2,12 @@ request = require 'request'
 http = require 'http'
 fs = require 'fs'
 
-
+# add "i-" in front of the instance ID if it isnt there
+module.exports.getInstanceID = (InstID) ->
+  if /^i-.*$/.test(InstID)
+    return InstID
+  else
+    return "i-"+InstID
 
 module.exports.getSimpleDateWithOffset = (DayOffset) ->
   currentDate = new Date(new Date().getTime() + DayOffset * 24 * 60 * 60 * 1000);
