@@ -40,6 +40,7 @@ module.exports = (robot) ->
       msg_txt = " => Retrieving Instance ID from Memory.. Found: *#{ins_id}* \n"
     else
       ins_id = utils.getInstanceID(ins_id_input)
+      msg_txt = ""
 
     msg_txt = msg_txt + "Stopping Instance ID *#{ins_id}*"
     msg.send msg_txt
