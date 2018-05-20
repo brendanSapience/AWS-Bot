@@ -4,7 +4,7 @@ AWS-bot is a chat bot built on the [Hubot][hubot] framework.
 
 ### Purpose:
 
-Easily manage EC2 Instances used by the US Presales team for CA | Automic
+Easily manage EC2 Instances used by the US Presales team (Automation Anywhere)
 
 ### Configuration
 
